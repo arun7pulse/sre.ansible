@@ -1,0 +1,24 @@
+---
+- name: Install Nginx
+  hosts: app
+  become: yes  # This allows the playbook to run with sudo privileges
+
+  tasks:
+    - name: Update package cache
+      apt:
+        update_cache: yes
+      when: ansible_pkg_mgr == 'apt'  # Conditional for package manager (apt in this case)
+
+    - name: Install Nginx
+      package:
+        name: nginx
+        state: present
+      notify: 
+        - Start Nginx  # Notify a handler to start the Nginx service
+
+  handlers:
+    - name: Start Nginx
+      service:
+        name: nginx
+        state: started
+        enabled: yes
